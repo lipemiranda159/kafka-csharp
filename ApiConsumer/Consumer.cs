@@ -1,33 +1,29 @@
 ﻿using Confluent.Kafka;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Utils;
 
 namespace ApiConsumer
 {
-    public class Consumer : IConsumer
+    public class Consumer : KafkaProviderBase,IConsumer
     {
         private readonly List<string> _messages;
-        public Consumer()
+        public Consumer(IConfiguration configuration) : base(configuration)
         {
             _messages = new List<string>();
         }
+
         public List<string> GetMessages()
         {
             return _messages;
         }
 
 
-        private void StartServer(CancellationToken stopingToken,string topic)
-
-        public Task ExecuteAsync(CancellationToken stopingToken)
-        {
-            Task.Run(() => StartServer(stoppingToken));  
-            return Task.CompletedTask;  
-        }
-
-
+        private void StartServer(CancellationToken stopingToken, string topic)
         {
             var logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -80,5 +76,13 @@ namespace ApiConsumer
                              $"Mensagem: {ex.Message}");
             }
         }
+
+
+        public Task ExecuteAsync(CancellationToken stopingToken, string topic)
+        {
+            Task.Run(() => StartServer(stopingToken, topic));
+            return Task.CompletedTask;
+        }
     }
+
 }

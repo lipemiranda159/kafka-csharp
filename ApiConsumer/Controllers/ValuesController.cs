@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ApiConsumer.Controllers
 {
@@ -16,7 +17,7 @@ namespace ApiConsumer.Controllers
         [HttpGet]
         public async Task<ActionResult<bool>> StartConsumer()
         {
-            _consumer.ExecuteAsync(default);
+            await _consumer.ExecuteAsync(default, "teste");
             return Ok(true);
         }
     }

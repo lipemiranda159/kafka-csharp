@@ -9,28 +9,16 @@ namespace ApiProducer.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IProducer _producer;
+        public ValuesController(IProducer producer)
+        {
+            _producer = producer;
+        }
         [HttpPost]
         public async Task<ActionResult> SendData([FromQuery] string data)
         {
-            var bootstrapServers = "kafka:29092";
-            var nomeTopic = "teste";
 
-
-            var config = new ProducerConfig
-            {
-                BootstrapServers = bootstrapServers
-            };
-
-            using (var producer = new ProducerBuilder<Null, string>(config).Build())
-            {
-                var result = await producer.ProduceAsync(
-                    nomeTopic,
-                    new Message<Null, string>
-                    { Value = data });
-
-                return Ok(result);
-            }
-
+            return Ok(await _producer.SendData("teste", data));
         }
 
     }
