@@ -18,13 +18,16 @@ namespace ApiConsumer
             return _messages;
         }
 
+
+        private void StartServer(CancellationToken stopingToken,string topic)
+
         public Task ExecuteAsync(CancellationToken stopingToken)
         {
             Task.Run(() => StartServer(stoppingToken));  
             return Task.CompletedTask;  
         }
 
-        private async Task StartServer(CancellationToken stopingToken)
+
         {
             var logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -33,7 +36,7 @@ namespace ApiConsumer
 
 
             string bootstrapServers = "kafka:29092";
-            string nomeTopic = "teste";
+            string nomeTopic = topic;
 
             logger.Information($"BootstrapServers = {bootstrapServers}");
             logger.Information($"Topic = {nomeTopic}");
@@ -54,24 +57,21 @@ namespace ApiConsumer
 
             try
             {
-                using (var consumer = new ConsumerBuilder<Ignore, string>(config).Build())
-                {
-                    consumer.Subscribe(nomeTopic);
+                using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+                consumer.Subscribe(nomeTopic);
 
-                    try
+                try
+                {
+                    while (true)
                     {
-                        while (true)
-                        {
-                            var cr = consumer.Consume(cts.Token);
-                            logger.Information(cr.Message.Value);
-                            _messages.Add(cr.Message.Value);
-                        }
+                        var cr = consumer.Consume(cts.Token);
+                        _messages.Add(cr.Message.Value);
                     }
-                    catch (OperationCanceledException)
-                    {
-                        consumer.Close();
-                        logger.Warning("Cancelada a execução do Consumer...");
-                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    consumer.Close();
+                    logger.Warning("Cancelada a execução do Consumer...");
                 }
             }
             catch (Exception ex)
@@ -80,7 +80,5 @@ namespace ApiConsumer
                              $"Mensagem: {ex.Message}");
             }
         }
-
-        
     }
 }
