@@ -1,8 +1,8 @@
 ﻿using Confluent.Kafka;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ApiConsumer
 {
@@ -18,7 +18,16 @@ namespace ApiConsumer
             return _messages;
         }
 
-        public void StartServer(string topic)
+
+        private void StartServer(CancellationToken stopingToken,string topic)
+
+        public Task ExecuteAsync(CancellationToken stopingToken)
+        {
+            Task.Run(() => StartServer(stoppingToken));  
+            return Task.CompletedTask;  
+        }
+
+
         {
             var logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -71,6 +80,5 @@ namespace ApiConsumer
                              $"Mensagem: {ex.Message}");
             }
         }
-
     }
 }

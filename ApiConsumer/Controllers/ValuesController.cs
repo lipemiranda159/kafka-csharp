@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace ApiConsumer.Controllers
 {
@@ -13,9 +14,9 @@ namespace ApiConsumer.Controllers
         }
 
         [HttpGet]
-        public ActionResult<bool> StartConsumer()
+        public async Task<ActionResult<bool>> StartConsumer()
         {
-            _consumer.StartServer();
+            _consumer.ExecuteAsync(default);
             return Ok(true);
         }
     }
