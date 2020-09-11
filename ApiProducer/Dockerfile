@@ -6,6 +6,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine3.11 AS build
 WORKDIR /src
 COPY ["ApiProducer/ApiProducer.csproj", "ApiProducer/"]
+COPY ["Utils/Utils.csproj", "Utils/"]
+
 RUN dotnet restore "ApiProducer/ApiProducer.csproj"
 COPY . .
 WORKDIR "/src/ApiProducer"

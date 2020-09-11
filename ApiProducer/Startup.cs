@@ -26,6 +26,7 @@ namespace ApiProducer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<IProducer, Producer>();
             //services.AddSwaggerGen(c =>
             //{
             //    c.SwaggerDoc(API_VERSION, new OpenApiInfo { Title = "Producer", Version = API_VERSION });
