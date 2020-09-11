@@ -4,7 +4,7 @@ namespace ApiConsumer
 {
     public interface IConsumer
     {
-        void StartServer();
+        void StartServer(string topic);
         List<string> GetMessages();
     }
 }
